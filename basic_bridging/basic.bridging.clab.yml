@@ -1,0 +1,31 @@
+name: basic-bridging
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.0F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf1:
+      kind: ceos 
+      binds:
+        - /root/evpn/yt/basic_bridging/capture:/tmp/
+    leaf2:
+      kind: ceos
+      binds:
+        - /root/evpn/yt/basic_bridging/capture:/tmp/
+    spine1:
+      kind: ceos
+      binds:
+        - /root/evpn/yt/basic_bridging/capture:/tmp/ 
+    host1:
+      kind: linux
+    host2:
+      kind: linux
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+
+    - endpoints: ["leaf1:eth1", "host1:eth1"]
+    - endpoints: ["leaf2:eth1", "host2:eth1"]
