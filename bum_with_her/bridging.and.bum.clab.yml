@@ -9,23 +9,23 @@ topology:
     leaf1:
       kind: ceos 
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /bum_with_her/capture:/tmp/
     leaf2:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /bum_with_her/capture:/tmp/
     leaf3:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /bum_with_her/capture:/tmp/
     leaf4:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /bum_with_her/capture:/tmp/
     spine1:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/ 
+        - /bum_with_her/capture:/tmp/ 
     host1:
       kind: linux
     host2:

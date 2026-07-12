@@ -9,15 +9,15 @@ topology:
     leaf1:
       kind: ceos 
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /basic_bridging/capture:/tmp/
     leaf2:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/
+        - /basic_bridging/capture:/tmp/
     spine1:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_bridging/capture:/tmp/ 
+        - /basic_bridging/capture:/tmp/ 
     host1:
       kind: linux
     host2:
