@@ -1,0 +1,54 @@
+name: bridging-deep-dive
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf1:
+      kind: ceos 
+      binds:
+        - /bridging_deep_dive/capture:/tmp/
+    leaf2:
+      kind: ceos
+      binds:
+        - /bridging_deep_dive/capture:/tmp/
+    leaf3:
+      kind: ceos
+      binds:
+        - /bridging_deep_dive/capture:/tmp/
+    leaf4:
+      kind: ceos
+      binds:
+        - /bridging_deep_dive/capture:/tmp/
+    spine1:
+      kind: ceos
+      binds:
+        - /bridging_deep_dive/capture:/tmp/ 
+    host1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.10.10.30/24 dev eth1
+    host4:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.20.20.40/24 dev eth1
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+    - endpoints: ["spine1:eth3", "leaf3:eth11"]
+    - endpoints: ["spine1:eth4", "leaf4:eth11"]
