@@ -9,23 +9,23 @@ topology:
     leaf1:
       kind: ceos 
       binds:
-        - /root/evpn/yt/basic_routing/capture:/tmp/
+        - /basic_routing/capture:/tmp/
     leaf2:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_routing/capture:/tmp/
+        - /basic_routing/capture:/tmp/
     leaf3:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_routing/capture:/tmp/
+        - /basic_routing/capture:/tmp/
     leaf4:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_routing/capture:/tmp/
+        - /basic_routing/capture:/tmp/
     spine1:
       kind: ceos
       binds:
-        - /root/evpn/yt/basic_routing/capture:/tmp/ 
+        - /basic_routing/capture:/tmp/ 
     host1:
       kind: linux
       exec:
