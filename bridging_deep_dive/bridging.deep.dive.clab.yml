@@ -8,10 +8,12 @@ topology:
   nodes:
     leaf1:
       kind: ceos 
+      startup-config: leaf1.cfg
       binds:
         - /bridging_deep_dive/capture:/tmp/
     leaf2:
       kind: ceos
+      startup-config: leaf2.cfg
       binds:
         - /bridging_deep_dive/capture:/tmp/
     leaf3:
@@ -24,6 +26,7 @@ topology:
         - /bridging_deep_dive/capture:/tmp/
     spine1:
       kind: ceos
+      startup-config: spine1.cfg
       binds:
         - /bridging_deep_dive/capture:/tmp/ 
     host1:

@@ -8,22 +8,27 @@ topology:
   nodes:
     leaf1:
       kind: ceos 
+      startup-config: leaf1.cfg
       binds:
         - /bum_with_her/capture:/tmp/
     leaf2:
       kind: ceos
+      startup-config: leaf2.cfg
       binds:
         - /bum_with_her/capture:/tmp/
     leaf3:
       kind: ceos
+      startup-config: leaf3.cfg
       binds:
         - /bum_with_her/capture:/tmp/
     leaf4:
       kind: ceos
+      startup-config: leaf4.cfg
       binds:
         - /bum_with_her/capture:/tmp/
     spine1:
       kind: ceos
+      startup-config: spine1.cfg
       binds:
         - /bum_with_her/capture:/tmp/ 
     host1:
