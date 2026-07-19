@@ -8,14 +8,17 @@ topology:
   nodes:
     leaf1:
       kind: ceos 
+      startup-config: leaf1.cfg
       binds:
         - /routing_deep_dive/capture:/tmp/
     leaf2:
       kind: ceos
+      startup-config: leaf2.cfg
       binds:
         - /routing_deep_dive/capture:/tmp/
     leaf3:
       kind: ceos
+      startup-config: leaf3.cfg
       binds:
         - /routing_deep_dive/capture:/tmp/
     leaf4:
@@ -24,6 +27,7 @@ topology:
         - /routing_deep_dive/capture:/tmp/
     spine1:
       kind: ceos
+      startup-config: spine1.cfg
       binds:
         - /routing_deep_dive/capture:/tmp/ 
     host1:
