@@ -1,0 +1,130 @@
+name: external-routing-multi-tenancy
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf1:
+      kind: ceos 
+      startup-config: leaf1.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/
+    leaf2:
+      kind: ceos
+      startup-config: leaf2.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/
+    leaf3:
+      kind: ceos
+      startup-config: leaf3.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/
+    leaf4:
+      kind: ceos
+      startup-config: leaf4.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/
+
+    spine1:
+      kind: ceos
+      startup-config: spine1.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/ 
+    spine2:
+      kind: ceos
+      startup-config: spine2.cfg
+      binds:
+        - /external_routing_multi_tenancy/capture:/tmp/
+
+    r1:
+      kind: linux
+      binds:
+        - /external_routing_multi_tenancy/daemons:/etc/frr/daemons
+        - /external_routing_multi_tenancy/r1.cfg:/etc/frr/frr.conf
+      exec:
+        - ip a a 172.16.31.1/24 dev eth1
+        - ip a a 172.16.41.1/24 dev eth2
+        - ip a a 172.16.15.1/24 dev eth3
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+
+    r2:
+      kind: linux
+      binds:
+        - /external_routing_multi_tenancy/daemons:/etc/frr/daemons
+        - /external_routing_multi_tenancy/r2.cfg:/etc/frr/frr.conf
+      exec:
+        - ip a a 172.16.42.2/24 dev eth1
+        - ip a a 172.16.32.2/24 dev eth2
+        - ip a a 172.16.26.2/24 dev eth3
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+
+    host1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.30.30.30/24 dev eth1
+        - ip r r default via 10.30.30.1 dev eth1
+    host4:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.30.30.40/24 dev eth1
+        - ip r r default via 10.30.30.1 dev eth1
+    host5:
+      kind: linux
+      binds:
+        - /external_routing_multi_tenancy/daemons:/etc/frr/daemons
+        - /external_routing_multi_tenancy/h5.cfg:/etc/frr/frr.conf
+      exec:
+        - ip a a 172.16.15.5/24 dev eth1
+        - ip a a 10.100.100.100/32 dev lo
+    host6:
+      kind: linux
+      binds:
+        - /external_routing_multi_tenancy/daemons:/etc/frr/daemons
+        - /external_routing_multi_tenancy/h6.cfg:/etc/frr/frr.conf
+      exec:
+        - ip a a 172.16.26.6/24 dev eth1
+        - ip a a 10.101.101.101/32 dev lo
+
+
+
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+    - endpoints: ["spine1:eth3", "leaf3:eth11"]
+    - endpoints: ["spine1:eth4", "leaf4:eth11"]
+    - endpoints: ["spine2:eth1", "leaf1:eth12"]
+    - endpoints: ["spine2:eth2", "leaf2:eth12"]
+    - endpoints: ["spine2:eth3", "leaf3:eth12"]
+    - endpoints: ["spine2:eth4", "leaf4:eth12"]
+
+    - endpoints: ["leaf3:eth1", "r1:eth1"]
+    - endpoints: ["leaf3:eth2", "r2:eth2"]
+    - endpoints: ["leaf4:eth1", "r2:eth1"]
+    - endpoints: ["leaf4:eth2", "r1:eth2"]
+
+    - endpoints: ["leaf1:eth1", "host1:eth1"]
+    - endpoints: ["leaf2:eth1", "host2:eth1"]
+    - endpoints: ["leaf1:eth2", "host3:eth1"]
+    - endpoints: ["leaf2:eth2", "host4:eth1"]
+
+    - endpoints: ["r1:eth3", "host5:eth1"]
+    - endpoints: ["r2:eth3", "host6:eth1"]
