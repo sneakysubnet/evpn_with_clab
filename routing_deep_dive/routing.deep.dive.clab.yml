@@ -10,26 +10,26 @@ topology:
       kind: ceos 
       startup-config: leaf1.cfg
       binds:
-        - /routing_deep_dive/capture:/tmp/
+        - capture:/tmp/
     leaf2:
       kind: ceos
       startup-config: leaf2.cfg
       binds:
-        - /routing_deep_dive/capture:/tmp/
+        - capture:/tmp/
     leaf3:
       kind: ceos
       startup-config: leaf3.cfg
       binds:
-        - /routing_deep_dive/capture:/tmp/
+        - capture:/tmp/
     leaf4:
       kind: ceos
       binds:
-        - /routing_deep_dive/capture:/tmp/
+        - capture:/tmp/
     spine1:
       kind: ceos
       startup-config: spine1.cfg
       binds:
-        - /routing_deep_dive/capture:/tmp/ 
+        - capture:/tmp/ 
     host1:
       kind: linux
       exec:

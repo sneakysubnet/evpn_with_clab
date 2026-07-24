@@ -10,33 +10,33 @@ topology:
       kind: ceos 
       startup-config: leaf1.cfg
       binds:
-        - /multicast_routing/capture:/tmp/
+        - capture:/tmp/
     leaf2:
       kind: ceos
       startup-config: leaf2.cfg
       binds:
-        - /multicast_routing/capture:/tmp/
+        - capture:/tmp/
     leaf3:
       kind: ceos
       startup-config: leaf3.cfg
       binds:
-        - /multicast_routing/capture:/tmp/
+        - capture:/tmp/
     leaf4:
       kind: ceos
       startup-config: leaf4.cfg
       binds:
-        - /multicast_routing/capture:/tmp/
+        - capture:/tmp/
 
     spine1:
       kind: ceos
       startup-config: spine1.cfg
       binds:
-        - /multicast_routing/capture:/tmp/ 
+        - capture:/tmp/ 
     spine2:
       kind: ceos
       startup-config: spine2.cfg
       binds:
-        - /multicast_routing/capture:/tmp/
+        - capture:/tmp/
 
     host1:
       kind: linux

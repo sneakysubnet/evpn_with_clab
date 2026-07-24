@@ -10,27 +10,27 @@ topology:
       kind: ceos 
       startup-config: leaf1.cfg
       binds:
-        - /bum_with_her/capture:/tmp/
+        - capture:/tmp/
     leaf2:
       kind: ceos
       startup-config: leaf2.cfg
       binds:
-        - /bum_with_her/capture:/tmp/
+        - capture:/tmp/
     leaf3:
       kind: ceos
       startup-config: leaf3.cfg
       binds:
-        - /bum_with_her/capture:/tmp/
+        - capture:/tmp/
     leaf4:
       kind: ceos
       startup-config: leaf4.cfg
       binds:
-        - /bum_with_her/capture:/tmp/
+        - capture:/tmp/
     spine1:
       kind: ceos
       startup-config: spine1.cfg
       binds:
-        - /bum_with_her/capture:/tmp/ 
+        - capture:/tmp/ 
     host1:
       kind: linux
     host2:

@@ -10,17 +10,17 @@ topology:
       kind: ceos 
       startup-config: leaf1.cfg
       binds:
-        - /basic_bridging/capture:/tmp/
+        - capture:/tmp/
     leaf2:
       kind: ceos
       startup-config: leaf2.cfg
       binds:
-        - /basic_bridging/capture:/tmp/
+        - capture:/tmp/
     spine1:
       kind: ceos
       startup-config: spine1.cfg
       binds:
-        - /basic_bridging/capture:/tmp/ 
+        - capture:/tmp/ 
     host1:
       kind: linux
     host2:
