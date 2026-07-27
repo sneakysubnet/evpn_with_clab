@@ -1,0 +1,17 @@
+#Create bond interface
+ip link add dev bond0 type bond
+#Use LACP on bond interface
+echo 802.3ad > /sys/class/net/bond0/bonding/mode
+echo fast > /sys/class/net/bond0/bonding/lacp_rate
+echo layer3+4 > /sys/class/net/bond0/bonding/xmit_hash_policy
+#Assign physical interfaces to bond
+ip link set dev eth1 down
+ip link set dev eth2 do
+ip link set dev eth1 master bond0
+ip link set dev eth2 master bond0
+ip link set dev bond0 up
+ip link set dev eth1 up
+ip link set dev eth2 up
+#Assign IP to bond and change default route
+ip a a 10.10.10.10/24 dev bond0
+ip r r default via 10.10.10.1 dev bond0
