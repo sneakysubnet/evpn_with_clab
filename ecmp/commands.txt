@@ -1,0 +1,22 @@
+sysctl net.ipv4.fib_multipath_hash_policy
+sysctl net.ipv4.fib_multipath_hash_fields
+
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 400
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 401
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 402
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 403
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 404
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 405
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 406
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 407
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 408
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 409
+ip route get 10.20.20.20 from 10.10.10.10 ipproto tcp sport 1234 dport 410
+
+ip nexthop add id 101 via 10.1.11.11 dev eth1 
+ip nexthop add id 102 via 10.1.12.12 dev eth2
+ip nexthop add id 103 via 10.1.13.13 dev eth3
+ip nexthop add id 104 via 10.1.14.14 dev eth4
+ip nexthop add id 1000 group 101/102/103/104 type resilient buckets 128 idle_timer 60 unbalanced_timer 300
+
+ip nexthop bucket show id 1000
