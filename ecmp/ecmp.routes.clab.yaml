@@ -1,0 +1,77 @@
+name: ecmp
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf1:
+      kind: linux 
+      exec:
+        - apk add tcpdump
+      binds:
+        - capture:/tmp/
+        - daemons:/etc/frr/daemons
+        - leaf1.cfg:/etc/frr/frr.conf
+    leaf2:
+      kind: linux 
+      binds:
+        - capture:/tmp/
+        - daemons:/etc/frr/daemons
+        - leaf2.cfg:/etc/frr/frr.conf
+    spine1:
+      kind: linux
+      binds:
+        - capture:/tmp/ 
+        - daemons:/etc/frr/daemons
+        - spine1.cfg:/etc/frr/frr.conf
+    spine2:
+      kind: linux
+      binds:
+        - capture:/tmp/
+        - daemons:/etc/frr/daemons
+        - spine2.cfg:/etc/frr/frr.conf
+    spine3:
+      kind: linux
+      binds:
+        - capture:/tmp/ 
+        - daemons:/etc/frr/daemons
+        - spine3.cfg:/etc/frr/frr.conf
+    spine4:
+      kind: linux
+      binds:
+        - capture:/tmp/
+        - daemons:/etc/frr/daemons
+        - spine4.cfg:/etc/frr/frr.conf
+
+    host1:
+      kind: linux
+      binds:
+        - ping.py:/tmp/ping.py
+      exec:
+        - apk add tcpdump
+        - apk add scapy
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+
+  links:
+    - endpoints: ["leaf1:eth1", "spine1:eth1"]
+    - endpoints: ["leaf1:eth2", "spine2:eth1"]
+    - endpoints: ["leaf1:eth3", "spine3:eth1"]
+    - endpoints: ["leaf1:eth4", "spine4:eth1"]
+
+    - endpoints: ["leaf2:eth1", "spine1:eth2"]
+    - endpoints: ["leaf2:eth2", "spine2:eth2"]
+    - endpoints: ["leaf2:eth3", "spine3:eth2"]
+    - endpoints: ["leaf2:eth4", "spine4:eth2"]
+
+    - endpoints: ["leaf1:eth10", "host1:eth1"]
+    - endpoints: ["leaf2:eth10", "host2:eth1"]
