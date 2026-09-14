@@ -1,4 +1,4 @@
-name: design-underlay-5549
+name: design-underlay-mixed
 topology:
   kinds:
     ceos:
@@ -52,7 +52,7 @@ topology:
       kind: linux
       exec:
         - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
-        - ip a a 10.10.10.30/24 dev eth1
+        - ip a a 10.10.10.20/24 dev eth1
         - ip r r default via 10.10.10.1 dev eth1
     host4:
       kind: linux
