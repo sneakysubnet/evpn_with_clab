@@ -1,0 +1,143 @@
+name: design-overlay-mobility
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf1:
+      kind: ceos 
+      startup-config: ipv6/leaf1.cfg
+      binds:
+        - capture:/tmp/
+    leaf2:
+      kind: ceos
+      startup-config: ipv6/leaf2.cfg
+      binds:
+        - capture:/tmp/
+    leaf3:
+      kind: ceos 
+      startup-config: ipv6/leaf3.cfg
+      binds:
+        - capture:/tmp/
+    leaf4:
+      kind: ceos
+      startup-config: ipv6/leaf4.cfg
+      binds:
+        - capture:/tmp/
+    leaf5:
+      kind: ceos
+      startup-config: ipv6/leaf5.cfg
+      binds:
+        - capture:/tmp/
+    leaf6:
+      kind: ceos
+      startup-config: ipv6/leaf6.cfg
+      binds:
+        - capture:/tmp/    
+    spine1:
+      kind: ceos
+      startup-config: ipv6/spine1.cfg
+      binds:
+        - capture:/tmp/ 
+    spine2:
+      kind: ceos
+      startup-config: ipv6/spine2.cfg
+      binds:
+        - capture:/tmp/ 
+    host1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.10.10.30/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host4:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.20.20.40/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host5:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:ee:ee:ee:ee:ee
+        - ip a a 10.30.30.50/24 dev eth1
+        - ip r r default via 10.30.30.1 dev eth1
+
+    host11:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.110.110.10/24 dev eth1
+        - ip r r default via 10.110.110.1 dev eth1
+    host12:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.120.120.20/24 dev eth1
+        - ip r r default via 10.120.120.1 dev eth1
+    host13:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.110.110.30/24 dev eth1
+        - ip r r default via 10.110.110.1 dev eth1
+    host14:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.120.120.40/24 dev eth1
+        - ip r r default via 10.120.120.1 dev eth1
+    host15:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:ee:ee:ee:ee:ee
+        - ip a a 10.130.130.50/24 dev eth1
+        - ip r r default via 10.130.130.1 dev eth1
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+    - endpoints: ["spine1:eth3", "leaf3:eth11"]
+    - endpoints: ["spine1:eth4", "leaf4:eth11"]
+    - endpoints: ["spine1:eth5", "leaf5:eth11"]
+    - endpoints: ["spine1:eth6", "leaf6:eth11"]
+    - endpoints: ["spine2:eth1", "leaf1:eth12"]
+    - endpoints: ["spine2:eth2", "leaf2:eth12"]
+    - endpoints: ["spine2:eth3", "leaf3:eth12"]
+    - endpoints: ["spine2:eth4", "leaf4:eth12"]
+    - endpoints: ["spine2:eth5", "leaf5:eth12"]
+    - endpoints: ["spine2:eth6", "leaf6:eth12"]
+
+    - endpoints: ["leaf1:eth1", "host1:eth1"]
+    - endpoints: ["leaf1:eth2", "host2:eth1"]
+    - endpoints: ["leaf2:eth1", "host3:eth1"]
+    - endpoints: ["leaf2:eth2", "host4:eth1"]
+    - endpoints: ["leaf3:eth1", "host5:eth1"]
+
+    - endpoints: ["leaf4:eth1", "host11:eth1"]
+    - endpoints: ["leaf4:eth2", "host12:eth1"]
+    - endpoints: ["leaf5:eth1", "host13:eth1"]
+    - endpoints: ["leaf5:eth2", "host14:eth1"]
+    - endpoints: ["leaf6:eth1", "host15:eth1"]
+
+
+
+
+
+
+
+
