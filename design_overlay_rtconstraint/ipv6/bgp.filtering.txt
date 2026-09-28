@@ -1,0 +1,46 @@
+ip extcommunity-list DENY_RTS_FROM_D1 permit rt 10:10
+ip extcommunity-list DENY_RTS_FROM_D1 permit rt 20:20
+ip extcommunity-list DENY_RTS_FROM_D1 permit rt 30:30
+ip extcommunity-list DENY_RTS_FROM_D2 permit rt 110:110
+ip extcommunity-list DENY_RTS_FROM_D2 permit rt 120:120
+ip extcommunity-list DENY_RTS_FROM_D2 permit rt 130:130
+!
+
+!
+route-map DENY_RTS_FROM_D1 deny 10
+   match extcommunity DENY_RTS_FROM_D1
+!
+route-map DENY_RTS_FROM_D1 permit 20
+!
+route-map DENY_RTS_FROM_D2 deny 10
+   match extcommunity DENY_RTS_FROM_D2
+!
+route-map DENY_RTS_FROM_D2 permit 20
+!
+router bgp 65000
+   neighbor D1 peer group
+   neighbor D1 route-reflector-client
+   neighbor D1 route-map DENY_RTS_FROM_D2 out
+   neighbor D1 send-community extended
+   neighbor D2 peer group
+   neighbor D2 route-reflector-client
+   neighbor D2 route-map DENY_RTS_FROM_D1 out
+   neighbor D2 send-community extended
+   neighbor interface Ethernet1 peer-group D1 remote-as 65000
+   neighbor interface Ethernet2 peer-group D1 remote-as 65000
+   neighbor interface Ethernet3 peer-group D1 remote-as 65000
+   neighbor interface Ethernet4 peer-group D2 remote-as 65000
+   neighbor interface Ethernet5 peer-group D2 remote-as 65000
+   neighbor interface Ethernet6 peer-group D2 remote-as 65000
+   !
+   address-family evpn
+      neighbor D1 activate
+      neighbor D2 activate
+   !
+   address-family ipv6
+      neighbor D1 activate
+      neighbor D1 next-hop-self
+      neighbor D2 activate
+      neighbor D2 next-hop-self
+!
+
