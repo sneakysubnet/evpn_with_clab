@@ -1,0 +1,95 @@
+name: design-multi-fabric-basics
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf101:
+      kind: ceos 
+      startup-config: ipv4/leaf101.cfg
+      binds:
+        - capture:/tmp/
+    leaf102:
+      kind: ceos
+      startup-config: ipv4/leaf102.cfg
+      binds:
+        - capture:/tmp/
+    leaf201:
+      kind: ceos 
+      startup-config: ipv4/leaf201.cfg
+      binds:
+        - capture:/tmp/
+    leaf202:
+      kind: ceos
+      startup-config: ipv4/leaf202.cfg
+      binds:
+        - capture:/tmp/  
+    spine111:
+      kind: ceos
+      startup-config: ipv4/spine111.cfg
+      binds:
+        - capture:/tmp/ 
+    spine211:
+      kind: ceos
+      startup-config: ipv4/spine211.cfg
+      binds:
+        - capture:/tmp/ 
+    host11:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host12:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.10.10.20/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host13:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.120.120.30/24 dev eth1
+        - ip r r default via 10.120.120.1 dev eth1
+    host24:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.10.10.40/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host25:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:ee:ee:ee:ee:ee
+        - ip a a 10.10.10.50/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host26:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:ff:ff:ff:ff:ff
+        - ip a a 10.220.220.60/24 dev eth1
+        - ip r r default via 10.220.220.1 dev eth1
+
+
+
+  links:
+
+    - endpoints: ["spine111:eth10", "spine211:eth10"]
+
+    - endpoints: ["spine111:eth1", "leaf101:eth11"]
+    - endpoints: ["spine111:eth2", "leaf102:eth11"]
+    - endpoints: ["spine211:eth1", "leaf201:eth11"]
+    - endpoints: ["spine211:eth2", "leaf202:eth11"]
+
+    - endpoints: ["leaf101:eth1", "host11:eth1"]
+    - endpoints: ["leaf102:eth1", "host12:eth1"]
+    - endpoints: ["leaf102:eth2", "host13:eth1"]
+
+    - endpoints: ["leaf201:eth1", "host24:eth1"]
+    - endpoints: ["leaf202:eth1", "host25:eth1"]
+    - endpoints: ["leaf202:eth2", "host26:eth1"]
+
+
