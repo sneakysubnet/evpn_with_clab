@@ -1,0 +1,19 @@
+ip prefix-list AGG seq 5 permit 0.0.0.0/0 ge 17 le 32
+!
+!
+
+route-map SUMMARY_ONLY deny 5
+ match evpn route-type macip
+exit
+!
+route-map SUMMARY_ONLY deny 6
+ match evpn route-type multicast
+exit
+!
+route-map SUMMARY_ONLY deny 10
+ match evpn route-type prefix
+ match ip address prefix-list AGG
+exit
+!
+route-map SUMMARY_ONLY permit 20
+

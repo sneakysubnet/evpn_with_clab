@@ -1,0 +1,36 @@
+router general
+   control-functions
+      code
+            function BLOCK_PREFIX() {
+               if evpn.ip_prefix_route.prefix is 10.1.10.0/24 {
+                  return false;
+               }
+               return true;
+            }
+      EOF
+
+
+router general
+   control-functions
+      code
+            function BLOCK_PREFIX_WITH_COMM() {
+               if evpn.ip_prefix_route.prefix is 10.1.10.0/24 and ext_community match ext_community_list MATCH_RT{
+                  return false;
+               }
+               return true;
+            }
+      EOF
+
+router general
+   control-functions
+      code
+            function BLOCK() {
+               if evpn.route_type is_not EVPN_IP_PREFIX {
+                  return false;
+               }
+               else if evpn.ip_prefix_route.prefix.length > 16 {
+                  return false;
+               }
+               return true;
+            }
+      EOF
