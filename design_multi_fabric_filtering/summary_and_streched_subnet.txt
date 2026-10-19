@@ -1,0 +1,48 @@
+Arista
+ip extcommunity-list STRETCHED permit rt 99:99
+
+router general
+   control-functions
+      code
+            function BLOCK1() {
+               if ext_community match ext_community_list STRETCHED{
+               return true;
+               }
+               else if evpn.route_type is_not EVPN_IP_PREFIX {
+                  return false;
+               }
+               else if evpn.ip_prefix_route.prefix.length > 16 {
+                  return false;
+               }
+               return true;
+            }
+      EOF
+
+
+FRR
+
+bgp extcommunity-list standard STRETCHED seq 5 permit rt 99:99
+
+
+ip prefix-list AGG seq 5 permit 0.0.0.0/0 ge 17 le 32
+!
+route-map SUMMARY_ONLY permit 4
+ match extcommunity STRETCHED
+exit
+!
+route-map SUMMARY_ONLY deny 5
+ match evpn route-type macip
+exit
+!
+route-map SUMMARY_ONLY deny 6
+ match evpn route-type multicast
+exit
+!
+route-map SUMMARY_ONLY deny 10
+ match evpn route-type prefix
+ match ip address prefix-list AGG
+exit
+!
+route-map SUMMARY_ONLY permit 20
+
+
