@@ -1,0 +1,183 @@
+name: design-multi-fabric-firewall-aa
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.5.4
+  nodes:
+    leaf101:
+      kind: ceos 
+      startup-config: ipv4/leaf101.cfg
+      binds:
+        - capture:/tmp/
+    leaf102:
+      kind: ceos
+      startup-config: ipv4/leaf102.cfg
+      binds:
+        - capture:/tmp/
+    leaf103:
+      kind: ceos
+      startup-config: ipv4/leaf103.cfg
+      binds:
+        - capture:/tmp/
+    leaf201:
+      kind: ceos 
+      startup-config: ipv4/leaf201.cfg
+      binds:
+        - capture:/tmp/
+    leaf202:
+      kind: ceos
+      startup-config: ipv4/leaf202.cfg
+      binds:
+        - capture:/tmp/  
+    leaf203:
+      kind: ceos
+      startup-config: ipv4/leaf203.cfg
+      binds:
+        - capture:/tmp/
+    spine111:
+      kind: ceos
+      startup-config: ipv4/spine111.cfg
+      binds:
+        - capture:/tmp/ 
+    spine211:
+      kind: ceos
+      startup-config: ipv4/spine211.cfg
+      binds:
+        - capture:/tmp/ 
+    host11:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+      binds:
+        - hosts:/tmp/hosts
+    host12:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host13:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.1.10.30/24 dev eth1
+        - ip r r default via 10.1.10.1 dev eth1
+    host24:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.10.10.40/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host25:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:ee:ee:ee:ee:ee
+        - ip a a 10.20.20.50/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host26:
+      kind: linux
+      exec:
+        - apk add fping
+        - ip link set dev eth1 address 00:ff:ff:ff:ff:ff
+        - ip a a 10.2.10.60/24 dev eth1
+        - ip r r default via 10.2.10.1 dev eth1
+      binds:
+        - hosts2:/tmp/hosts
+
+    firewall1:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/firewall1.cfg:/etc/frr/frr.conf
+      exec:
+        - apk add tcpdump
+        - apk add fping
+        - ip a a 172.16.11.1/24 dev eth1
+        - ip a a 172.16.12.1/24 dev eth2
+        - ip a a 172.16.13.1/24 dev eth3
+        
+
+    firewall2:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/firewall2.cfg:/etc/frr/frr.conf
+      exec:
+        - apk add tcpdump
+        - apk add fping
+        - ip a a 172.16.21.1/24 dev eth1
+        - ip a a 172.16.22.1/24 dev eth2
+        - ip a a 172.16.23.1/24 dev eth3
+
+    r101:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/r101.cfg:/etc/frr/frr.conf
+      exec:
+        - apk add tcpdump
+        - apk add fping
+        - ip a a 172.16.101.101/24 dev eth1
+        - ip a a 172.16.1.101/24 dev eth2
+    r201:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/r201.cfg:/etc/frr/frr.conf
+      exec:
+        - apk add tcpdump
+        - apk add fping
+        - ip a a 172.16.201.201/24 dev eth1
+        - ip a a 172.16.2.201/24 dev eth2
+    r300:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/r300.cfg:/etc/frr/frr.conf
+      exec:
+        - apk add tcpdump
+        - apk add fping
+        - ip a a 172.16.1.3/24 dev eth1
+        - ip a a 172.16.2.3/24 dev eth2
+        - ip a a 100.100.100.100/32 dev lo
+
+
+
+  links:
+
+    - endpoints: ["spine111:eth10", "spine211:eth10"]
+
+    - endpoints: ["spine111:eth1", "leaf101:eth11"]
+    - endpoints: ["spine111:eth2", "leaf102:eth11"]
+    - endpoints: ["spine111:eth3", "leaf103:eth11"]  
+    - endpoints: ["spine211:eth1", "leaf201:eth11"]
+    - endpoints: ["spine211:eth2", "leaf202:eth11"]
+    - endpoints: ["spine211:eth3", "leaf203:eth11"]
+
+    - endpoints: ["leaf101:eth1", "host11:eth1"]
+    - endpoints: ["leaf101:eth2", "host12:eth1"]
+    - endpoints: ["leaf101:eth3", "host13:eth1"]
+    - endpoints: ["leaf102:eth1", "firewall1:eth1"]
+    - endpoints: ["leaf102:eth2", "firewall1:eth2"]
+    - endpoints: ["leaf102:eth3", "firewall1:eth3"]
+    - endpoints: ["leaf103:eth1", "r101:eth1"]
+
+    - endpoints: ["leaf201:eth1", "host24:eth1"]
+    - endpoints: ["leaf201:eth2", "host25:eth1"]
+    - endpoints: ["leaf201:eth3", "host26:eth1"]
+    - endpoints: ["leaf202:eth1", "firewall2:eth1"]
+    - endpoints: ["leaf202:eth2", "firewall2:eth2"]
+    - endpoints: ["leaf202:eth3", "firewall2:eth3"]
+    - endpoints: ["leaf203:eth1", "r201:eth1"]
+
+    - endpoints: ["r101:eth2", "r300:eth1"]
+    - endpoints: ["r201:eth2", "r300:eth2"]
