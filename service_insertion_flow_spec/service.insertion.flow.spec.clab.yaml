@@ -1,0 +1,84 @@
+name: service-insertion-flow-spec
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: quay.io/frrouting/frr:10.7.1
+  nodes:
+    leaf101:
+      kind: ceos 
+      startup-config: ipv4/leaf101.cfg
+      binds:
+        - capture:/tmp/
+    leaf102:
+      kind: ceos
+      startup-config: ipv4/leaf102.cfg
+      binds:
+        - capture:/tmp/
+    spine11:
+      kind: ceos
+      startup-config: ipv4/spine11.cfg
+      binds:
+        - capture:/tmp/ 
+
+    host1:
+      kind: linux
+      exec:
+        - apk add curl
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1 dev eth1
+    host2:
+      kind: linux
+      image: nginx:alpine
+      ports:
+        - "8080:80"
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1 dev eth1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.30.30.30/24 dev eth1
+        - ip r r default via 10.30.30.1 dev eth1
+    fw:
+      kind: linux
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/fw.cfg:/etc/frr/frr.conf
+        - capture:/tmp/
+      exec:
+        - apk add tcpdump
+        - ip r r default via 172.16.21.2
+        - ip a a 172.16.21.1/24 dev eth1
+        - ip a a 172.16.22.1/24 dev eth2
+
+    exa:
+      kind: linux
+      image: ghcr.io/exa-networks/exabgp:5.0.13
+      binds:
+        - ipv4/exa.cfg:/etc/exabgp/exabgp.conf
+      cmd: /etc/exabgp/exabgp.conf
+      exec:
+        - ip a a 172.16.11.100/24 dev eth1
+
+
+
+
+
+  links:
+    - endpoints: ["spine11:eth1", "leaf101:eth11"]
+    - endpoints: ["spine11:eth2", "leaf102:eth11"]
+
+
+    - endpoints: ["leaf101:eth1", "host1:eth1"]
+    - endpoints: ["leaf101:eth2", "host2:eth1"]
+    - endpoints: ["leaf101:eth3", "host3:eth1"]
+    - endpoints: ["leaf101:eth10", "exa:eth1"]
+
+    - endpoints: ["leaf102:eth1", "fw:eth1"]
+    - endpoints: ["leaf102:eth2", "fw:eth2"]
+
