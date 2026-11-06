@@ -1,0 +1,42 @@
+===Adding bridge===
+ip link add br10 type bridge
+ip link set br10 up
+ip link set dev eth1 master br10
+ip link set dev eth2 master br10
+
+===Verifying bridging===
+brctl show
+brctl showmacs br10
+
+ip a
+ip a show type bridge
+ip l
+ip l show type bridge
+
+bridge link
+
+bridge fdb show
+bridge fdb show br br10
+
+===Adding vxlan on leaf1===
+
+ip link add vxlan10 type vxlan \
+    id 10010 \
+    local 172.16.1.1 \
+    dstport 4789 \
+    nolearning
+
+ip link set vxlan10 master br10
+ip link set vxlan10 type bridge_slave learning off
+ip link set vxlan10 up
+
+===Adding vxlan on leaf2===
+ip link add vxlan10 type vxlan \
+    id 10010 \
+    local 172.16.1.2 \
+    dstport 4789 \
+    nolearning
+
+ip link set vxlan10 master br10
+ip link set vxlan10 type bridge_slave learning off
+ip link set vxlan10 up
