@@ -1,0 +1,69 @@
+name: frr-basic-bridging
+topology:
+  kinds:
+    linux:
+      image: quay.io/frrouting/frr:10.7.1
+  nodes:
+    leaf1:
+      kind: linux 
+      exec:
+        - apk add tcpdump
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+        - ip link set dev eth11 mtu 1500
+        - ip a a 172.16.1.1/32 dev lo
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/leaf1.cfg:/etc/frr/frr.conf
+        - capture:/tmp/ 
+    leaf2:
+      kind: linux
+      exec:
+        - apk add tcpdump
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+        - ip link set dev eth11 mtu 1500
+        - ip a a 172.16.1.2/32 dev lo
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/leaf2.cfg:/etc/frr/frr.conf
+        - capture:/tmp/ 
+    spine1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+        - ip a a 172.16.1.11/32 dev lo
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/spine1.cfg:/etc/frr/frr.conf
+        - capture:/tmp/ 
+    host1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.10.10.20/24 dev eth1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.10.10.30/24 dev eth1
+    host4:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.10.10.40/24 dev eth1
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+
+    - endpoints: ["leaf1:eth1", "host1:eth1"]
+    - endpoints: ["leaf1:eth2", "host2:eth1"]
+    - endpoints: ["leaf2:eth1", "host3:eth1"]
+    - endpoints: ["leaf2:eth2", "host4:eth1"]
