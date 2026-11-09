@@ -2,7 +2,7 @@ name: frr-basic-routing
 topology:
   kinds:
     linux:
-      image: frr:10.7.1-macvlan
+      image: ghcr.io/sneakysubnet/frr-sneakysubnet:10.7.1-macvlan-fix
   nodes:
     leaf1:
       kind: linux 
