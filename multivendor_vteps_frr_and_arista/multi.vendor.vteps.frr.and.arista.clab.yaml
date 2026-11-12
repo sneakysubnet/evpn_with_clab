@@ -1,0 +1,70 @@
+name: multi-vendor-vteps-frr-and-arista
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.36.1F 
+    linux:
+      image: ghcr.io/sneakysubnet/frr-sneakysubnet:10.7.1-macvlan-fix
+  nodes:
+    leaf1:
+      kind: linux 
+      exec:
+        - apk add tcpdump
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+        - ip link set dev eth11 mtu 1500
+        - ip a a 172.16.1.1/32 dev lo
+        - /bin/sh /tmp/leaf1.net.config.sh
+      binds:
+        - leaf1.net.config.sh:/tmp/leaf1.net.config.sh
+        - daemons:/etc/frr/daemons
+        - ipv4/leaf1.cfg:/etc/frr/frr.conf
+        - capture:/tmp/ 
+    leaf2:
+      kind: ceos
+      startup-config: ipv4/leaf2.cfg
+      binds:
+        - capture:/tmp/
+    spine1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 mtu 1500
+        - ip link set dev eth2 mtu 1500
+        - ip a a 172.16.1.11/32 dev lo
+      binds:
+        - daemons:/etc/frr/daemons
+        - ipv4/spine1.cfg:/etc/frr/frr.conf
+        - capture:/tmp/ 
+    host1:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:aa:aa:aa:aa:aa
+        - ip a a 10.10.10.10/24 dev eth1
+        - ip r r default via 10.10.10.1
+    host2:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:bb:bb:bb:bb:bb
+        - ip a a 10.20.20.20/24 dev eth1
+        - ip r r default via 10.20.20.1
+    host3:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:cc:cc:cc:cc:cc
+        - ip a a 10.10.10.30/24 dev eth1
+        - ip r r default via 10.10.10.1
+    host4:
+      kind: linux
+      exec:
+        - ip link set dev eth1 address 00:dd:dd:dd:dd:dd
+        - ip a a 10.20.20.40/24 dev eth1
+        - ip r r default via 10.20.20.1
+
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth11"]
+    - endpoints: ["spine1:eth2", "leaf2:eth11"]
+
+    - endpoints: ["leaf1:eth1", "host1:eth1"]
+    - endpoints: ["leaf1:eth2", "host2:eth1"]
+    - endpoints: ["leaf2:eth1", "host3:eth1"]
+    - endpoints: ["leaf2:eth2", "host4:eth1"]
